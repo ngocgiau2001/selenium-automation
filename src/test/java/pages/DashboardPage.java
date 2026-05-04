@@ -1,7 +1,6 @@
 package pages;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
@@ -16,7 +15,7 @@ public class DashboardPage {
     public boolean isDashboardLoaded() {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            return wait.until(ExpectedConditions.urlContains("/admin"));
+            return wait.until(d -> d.getCurrentUrl().contains("/admin") && !d.getCurrentUrl().contains("login"));
         } catch (Exception e) {
             return false;
         }

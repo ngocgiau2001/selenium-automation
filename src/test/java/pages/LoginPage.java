@@ -35,9 +35,15 @@ public class LoginPage {
                 }
                 return null;
             });
-        org.openqa.selenium.JavascriptExecutor js = (org.openqa.selenium.JavascriptExecutor) driver;
         String val = email == null ? "" : email;
-        js.executeScript("arguments[0].value=arguments[1]; arguments[0].dispatchEvent(new Event('input', {bubbles: true}));", el, val);
+        try {
+            // Dùng Actions để click và gõ phím trực tiếp
+            new org.openqa.selenium.interactions.Actions(driver).moveToElement(el).click().sendKeys(val).perform();
+        } catch (Exception e) {
+            // Backup
+            org.openqa.selenium.JavascriptExecutor js = (org.openqa.selenium.JavascriptExecutor) driver;
+            js.executeScript("arguments[0].value=arguments[1]; arguments[0].dispatchEvent(new Event('input', {bubbles: true}));", el, val);
+        }
     }
 
     public void enterPassword(String password) {
@@ -48,9 +54,13 @@ public class LoginPage {
                 }
                 return null;
             });
-        org.openqa.selenium.JavascriptExecutor js = (org.openqa.selenium.JavascriptExecutor) driver;
         String val = password == null ? "" : password;
-        js.executeScript("arguments[0].value=arguments[1]; arguments[0].dispatchEvent(new Event('input', {bubbles: true}));", el, val);
+        try {
+            new org.openqa.selenium.interactions.Actions(driver).moveToElement(el).click().sendKeys(val).perform();
+        } catch (Exception e) {
+            org.openqa.selenium.JavascriptExecutor js = (org.openqa.selenium.JavascriptExecutor) driver;
+            js.executeScript("arguments[0].value=arguments[1]; arguments[0].dispatchEvent(new Event('input', {bubbles: true}));", el, val);
+        }
     }
 
     public void clickLogin() {
