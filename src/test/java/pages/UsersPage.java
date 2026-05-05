@@ -28,16 +28,24 @@ public class UsersPage {
 
     // Hàm tìm kiếm nhân viên
     public void searchEmployee(String keyword) {
+        // Chờ dữ liệu ban đầu load xong để tránh race condition (ghi đè kết quả)
+        try { Thread.sleep(2000); } catch (Exception e) {}
+
         WebElement searchInput = wait.until(ExpectedConditions.visibilityOfElementLocated(org.openqa.selenium.By.cssSelector("input[placeholder='Search employees...']")));
         
-        // Xóa nội dung bằng cách nhấn BACK_SPACE nhiều lần để không làm hỏng v-model của Vue 3
-        for (int i = 0; i < 30; i++) {
-            searchInput.sendKeys(org.openqa.selenium.Keys.BACK_SPACE);
-        }
+        // Xóa nội dung bằng Javascript để tránh lỗi với chuỗi dài
+        org.openqa.selenium.WebDriver driver = ((org.openqa.selenium.WrapsDriver) searchInput).getWrappedDriver();
+        org.openqa.selenium.JavascriptExecutor js = (org.openqa.selenium.JavascriptExecutor) driver;
         
-        // Gõ từ khóa tìm kiếm
-        searchInput.sendKeys(keyword);
+        // Gán giá trị và trigger event cho Vue 3
+        js.executeScript(
+            "arguments[0].value = arguments[1];" +
+            "arguments[0].dispatchEvent(new Event('input', { bubbles: true }));" +
+            "arguments[0].dispatchEvent(new Event('change', { bubbles: true }));", 
+            searchInput, keyword
+        );
         
+        // Chờ kết quả tìm kiếm load xong
         try { Thread.sleep(3000); } catch (Exception e) {}
     }
 
